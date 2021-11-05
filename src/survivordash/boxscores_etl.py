@@ -82,18 +82,6 @@ def _extract_initials(input_name):
         initials = ''.join([ word[0] for word in input_name.split() if word])
         return initials
     return None
-    
-
-    # tokens = input_name.split()
-    # f_inital = tokens[0][:1]
-    # if len(tokens) > 1:
-    #     l_inital = tokens[1][:1]
-    #     return ''.join([f_inital, l_inital])
-    # else:
-    #     return f_inital
-
-
-def _hash_player_name(input_name):
 
 
 def _match_player(input_name, season_number):
