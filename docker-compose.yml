@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+    pipline:
+        image: pipeline
+        container_name: pipeline
+        build:
+            context: ./
+            dockerfile: ./containers/pipeline/Dockerfile
+        volumes:
+            - ./:/code
+        env_file:
+            - env
+        environment:
+            WAREHOUSE_USER: ${POSTGRES_USER}
+            WAREHOUSE_PASSWORD: ${POSTGRES_PASSWORD}
+            WAREHOUSE_DB: ${POSTGRES_DB}
+            WAREHOUSE_HOST: ${POSTGRES_HOST}
+            WAREHOUSE_PORT: ${POSTGRES_PORT}
+    

@@ -1,0 +1,9 @@
+env
+.mypy*
+.pytest*
+.vscode*
+__pycache__*
+.pytest_cache
+src/survivordash/resources/*
+*.csv
+*.json
