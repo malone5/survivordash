@@ -1,13 +1,25 @@
 import sys
+import os
 import requests
+import csv
+
 import pandas as pd
 from bs4 import BeautifulSoup
 import re
+
 from survivordash import utility
 from survivordash.wiki_etl import SEASON_PLAYERS_FILE
-import csv
+
 
 """ Boxscore data pulled from https://www.truedorktimes.com/survivor/boxscores/data.htm"""
+
+FILEPATH = os.path.dirname(os.path.abspath(__file__)) # directory of this file
+RESOURCE_PATH = FILEPATH + '/resources/'
+
+# Output files
+GAME_STATS_FILE = RESOURCE_PATH + 'player_game_stats.csv'
+CHALLENGE_STATS_FILE = RESOURCE_PATH + 'chellenge_game_stats.csv'
+
 
 def _extract_player_names(elements):
         # Expects a list of html elements
@@ -98,13 +110,6 @@ def _match_player(input_name, season_number):
     
     first_name_last_initial = _extract_first_name_last_initial(input_name)
     initials = _extract_initials(input_name)
-    
-    # Hardcodes -  sometimes truedorktimes just has it wrong and there is no
-    # match criteria we can go off of here are some examples
-    # Flica vs Flicka from Jessica Smith in season 13
-    # Wardog vs The Wardog for Dan "The Wardog" DaSilva
-    
-
 
     # list of player hash matches returned
     match = df.loc[(df['season_number'] == season_number) & (df['nick_name'].str.contains(input_name))]['standard_name'].values
@@ -188,7 +193,7 @@ def complete_boxscore_stats(start=1, end=40):
         final_df = pd.concat([final_df, complete_data], ignore_index=True)
 
 
-    final_df.to_csv('resources/player_game_stats.csv'.format(season_number), index=False, quoting=csv.QUOTE_NONNUMERIC)
+    final_df.to_csv(GAME_STATS_FILE, index=False, quoting=csv.QUOTE_NONNUMERIC)
     print("complete!")
     return
 
@@ -212,7 +217,7 @@ def individual_boxscore_stats(start=1, end=40):
         final_df = pd.concat([final_df, challenge_data], ignore_index=True)
 
 
-    final_df.to_csv('resources/challenge_game_stats.csv'.format(season_number), index=False, quoting=csv.QUOTE_NONNUMERIC)
+    final_df.to_csv(CHALLENGE_STATS_FILE, index=False, quoting=csv.QUOTE_NONNUMERIC)
     print("complete!")
     return
 
