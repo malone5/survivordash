@@ -18,7 +18,7 @@ RESOURCE_PATH = FILEPATH + '/resources/'
 
 # Output files
 GAME_STATS_FILE = RESOURCE_PATH + 'player_game_stats.csv'
-CHALLENGE_STATS_FILE = RESOURCE_PATH + 'chellenge_game_stats.csv'
+CHALLENGE_STATS_FILE = RESOURCE_PATH + 'challenge_game_stats.csv'
 
 
 def _extract_player_names(elements):
