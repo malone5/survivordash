@@ -19,7 +19,7 @@ SEASONS_FILE = RESOURCE_PATH + 'seasons.json'
 SEASON_PLAYERS_FILE = RESOURCE_PATH + 'wiki_season_players.csv'
 
 
-def _get_season_number(season_name):
+def _season_name_to_number(season_name):
     if not os.path.exists(os.path.join(SEASONS_FILE)):
         create_seasons_file()
 
@@ -75,7 +75,7 @@ def create_season_players_file():
     player_table.insert(0, 'nick_name', player_table['name'].apply(_name_between_quotes), True)
     player_table.insert(0, 'standard_name', player_table['name'].apply(_name_outside_quotes), True)
     player_table.insert(0, 'player_hash', player_table['standard_name'].apply(utility._hash_player_name))
-    player_table.insert(0, 'season_number', player_table['season'].apply(_get_season_number), True)
+    player_table.insert(0, 'season_number', player_table['season'].apply(_season_name_to_number), True)
     player_table.reset_index(drop=True, inplace=True)
 
     # Create file

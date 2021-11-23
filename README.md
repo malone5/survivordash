@@ -45,7 +45,7 @@
 - season 33 has a key error 'name'. No Contestant label
 - start with nickname, then firs an last initial.
 
-# Final Goal of tblaae structure
+# Final Goal of table structure
     - Seasons [Number | Title]
     - Players [Name | "Player Hash","Standard Name","Nickname","Name","Age","Hometown","Profession",]
     - SeasonPlayers ["SeasonPlayerId", "SeasonNumber", "Player Hash", "Finish Place","COPLETE STATS..."]
@@ -60,3 +60,8 @@
 
 # DevLog: I think I need to tighten the scope. Small inconsistencies in trudorktimes.com is 
 # causing a headache. Instead of powering through. We sould reel it back to maek it more digestible.
+
+# DevNotes: Find a way to to break down and indivisual challenge
+
+# DevLog: Lets start by only caring about challenge wins and voting blocks. 
+# Look at is you win challenges, how many people participated, and what side of the vote were you on.
