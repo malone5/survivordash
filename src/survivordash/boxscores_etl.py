@@ -61,11 +61,15 @@ def _rename_complete_data_columns(df):
     return df
 
 def _rename_challenge_data_columns(df):
+    df.columns = df.columns.str.replace("*", "")
+    df.columns = df.columns.str.replace(".", "")
+
     challenge_field_map = {
         "Contestant": "name",
+        "MPF ChA": "ch_score", # ch_finish_avg * ch_appear
+        "MPF  ChA": "ch_score", # we have found anomolies with double spaces
         "MPF": "ch_finish_avg", # Mean of all percent finishes
         "ChA": "ch_appear",
-        "MPF* ChA": "ch_score", # ch_finish_avg * ch_appear
     }
     df.rename(columns=challenge_field_map, inplace=True)
 
@@ -73,8 +77,8 @@ def _rename_challenge_data_columns(df):
         new_col = col.replace(' ', '_')
         new_col = new_col.replace('E', 'ep_')
         new_col = new_col.replace('F', 'final_')
-        new_col = new_col.replace('IC', 'immunity')
-        new_col = new_col.replace('RC', 'reward')
+        # new_col = new_col.replace('IC', 'immunity')
+        # new_col = new_col.replace('RC', 'reward')
         df.rename(columns={col: new_col}, inplace=True)
 
 
@@ -221,13 +225,14 @@ def individual_boxscore_stats(start=1, end=40):
     print("complete!")
     return
 
-def process_season_range(start=1, end=40):
+def process_season_range(start=1, end=39):
     for season in range(start,end+1):
         process_season_data(season)
 
 def run():
-    complete_boxscore_stats()
-    individual_boxscore_stats()
+    season_cap = 39
+    complete_boxscore_stats(end=season_cap)
+    individual_boxscore_stats(end=season_cap)
     #process_season_range(27,27)
 
 

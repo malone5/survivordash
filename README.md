@@ -55,3 +55,8 @@
 # DevLog: Finally down (ET)L in a good place. Need to clean it up and start github repository
 
 # DevNotes: Create less files from boxscores etl.
+
+# DevLog: boxscores are not uniform. somtimes we get ep 11 reward 2 etc
+
+# DevLog: I think I need to tighten the scope. Small inconsistencies in trudorktimes.com is 
+# causing a headache. Instead of powering through. We sould reel it back to maek it more digestible.
