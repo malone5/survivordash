@@ -1,5 +1,5 @@
 import unittest
-from survivordash import boxscores_etl
+from survivordash import boxscore_extract
 import pandas as pd
 
 class TestVotingETL(unittest.TestCase):

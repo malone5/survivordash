@@ -18,10 +18,10 @@ import requests
 
 FILEPATH = os.path.dirname(os.path.abspath(__file__)) # directory of this file
 RESOURCE_PATH = FILEPATH + '/resources/'
+ALL_SEASONS_WIKI_URL = 'https://en.wikipedia.org/wiki/Survivor_(American_TV_series)'
 
 def get_season_wiki_url(season_number):
-    all_seasons_wiki = 'https://en.wikipedia.org/wiki/Survivor_(American_TV_series)'
-    tables = utility.get_html_tables(all_seasons_wiki)
+    tables = utility.get_html_tables(ALL_SEASONS_WIKI_URL)
     target_row = season_number-1
     season = tables[1].iloc[target_row]['Season title']
     season_wiki_url = "https://en.wikipedia.org/wiki/" + season.replace(" ", "_")
@@ -92,21 +92,40 @@ def vote_history(df, season_number):
     return votes_df
 
 
+def final_vote(df, season_number):
+    # we take from https://en.wikipedia.org/wiki/Survivor_(American_TV_series)
+    table = utility.get_html_tables(ALL_SEASONS_WIKI_URL)[1]
+    target_row = season_number-1
+    df = table.iloc[target_row]
+
+    runners = " & ".join(set([df['Runner(s)-up'], df['Runner(s)-up.1']]))
+
+    final_vote = {
+        "Winner": df['Winner'],
+        "Runners": runners,
+        "Vote": df['Final vote']
+    }
+    print(final_vote)
+    return df
+
+
 def extract_all_vote_results(season_number):
     vote_table = get_voting_table(season_number)
     EPISODE_NUMBER_ROW = 2
     vote_table.columns = vote_table.iloc[EPISODE_NUMBER_ROW] # Episode numbers as our header row
     vote_table = vote_table.loc[:,~vote_table.columns.duplicated(keep='last')] # Condense special outcomes formatting
 
-    elimination_df = elimination_results(vote_table, season_number)
-    votes_df = vote_history(vote_table, season_number)
+    #elimination_df = elimination_results(vote_table, season_number)
+    #votes_df = vote_history(vote_table, season_number)
+    final_vote_df = final_vote(vote_table, season_number)
     
 
 
 def run():
-    season_cap = 3
+    season_start = 11
+    season_cap = 15
 
-    for season in range(2, season_cap):
+    for season in range(season_start, season_cap):
         extract_all_vote_results(season)
 
 

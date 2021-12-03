@@ -64,4 +64,6 @@
 # DevNotes: Find a way to to break down and indivisual challenge
 
 # DevLog: Lets start by only caring about challenge wins and voting blocks. 
-# Look at is you win challenges, how many people participated, and what side of the vote were you on.
+# Look at: you win challenges, how many people participated, and what side of the vote were you on.
+
+# Dev Note: have a .sql fiel that create the tables we need.

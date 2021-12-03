@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import re
 
 from survivordash import utility
-from survivordash.wiki_etl import SEASON_PLAYERS_FILE
+from survivordash.wiki_extract import SEASON_PLAYERS_FILE
 
 
 """ Boxscore data pulled from https://www.truedorktimes.com/survivor/boxscores/data.htm"""
@@ -101,7 +101,7 @@ def _extract_initials(input_name):
 
 
 def _match_player(input_name, season_number):
-    df = pd.read_csv(SEASON_PLAYERS_FILE)
+    df = pd.read_csv(SEASON_PLAYERS_FILE, sep='|')
     df = df[['season_number', 'player_hash', 'nick_name', 'name','standard_name']]
 
     # Clean
@@ -173,8 +173,8 @@ def process_season_data(season_number):
     challenge_data.insert(0, 'matched_player_name', challenge_data['name'].apply(lambda name: _get_player_hash(name, season_number)), True)
     
     # Create files
-    complete_data.to_csv('resources/season{}_stats.csv'.format(season_number), index=False, quoting=csv.QUOTE_NONNUMERIC)
-    challenge_data.to_csv('resources/season{}_stats_indiv.csv'.format(season_number), index=False, quoting=csv.QUOTE_NONNUMERIC)
+    complete_data.to_csv('resources/season{}_stats.csv'.format(season_number), sep='|', index=False)
+    challenge_data.to_csv('resources/season{}_stats_indiv.csv'.format(season_number), sep='|', index=False)
 
 
 def complete_boxscore_stats(start=1, end=40):
@@ -197,7 +197,7 @@ def complete_boxscore_stats(start=1, end=40):
         final_df = pd.concat([final_df, complete_data], ignore_index=True)
 
 
-    final_df.to_csv(GAME_STATS_FILE, index=False, quoting=csv.QUOTE_NONNUMERIC)
+    final_df.to_csv(GAME_STATS_FILE, index=False, sep='|')
     print("complete!")
     return
 
@@ -221,7 +221,7 @@ def individual_boxscore_stats(start=1, end=40):
         final_df = pd.concat([final_df, challenge_data], ignore_index=True)
 
 
-    final_df.to_csv(CHALLENGE_STATS_FILE, index=False, quoting=csv.QUOTE_NONNUMERIC)
+    final_df.to_csv(CHALLENGE_STATS_FILE, index=False, sep='|')
     print("complete!")
     return
 

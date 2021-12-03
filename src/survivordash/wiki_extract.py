@@ -79,7 +79,7 @@ def create_season_players_file():
     player_table.reset_index(drop=True, inplace=True)
 
     # Create file
-    player_table.to_csv(SEASON_PLAYERS_FILE, index=False, quoting=csv.QUOTE_NONNUMERIC)
+    player_table.to_csv(SEASON_PLAYERS_FILE, sep='|', index=False)
 
 
 def run():
