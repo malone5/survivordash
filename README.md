@@ -67,3 +67,15 @@
 # Look at: you win challenges, how many people participated, and what side of the vote were you on.
 
 # Dev Note: have a .sql fiel that create the tables we need.
+
+# Dev Log: perhaps we should be loading to the database -> making transforms there. BIG changes to come
+
+# Dev Log: We are going to depricate our voting history dataset.
+# Reasons:
+- Voting rounds and elimation is an unreliable variable
+- Sometimes they draw rocks, re-vote which can be solved by taking the final result 
+- However when both tribes vote off (like Episode 6 of Season 11: Guatemala) it can mess with programattic consistency
+- For the sake of time we will forgo this data
+- There may hope using >>> df.loc[:,~df.columns.duplicated(keep='last')] on episode, but not now.
+
+# Dev Notes: Episodes with a simultanious quit + council will only record the Quit, missing the council entirely :(

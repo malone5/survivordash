@@ -1,11 +1,9 @@
-import sys, os
-import requests
+import os
 import pandas as pd
 import json
 import re
-import hashlib
-import csv
 from survivordash import utility
+from db import get_db_engine
 
 """
 create files we will use as refrence
@@ -47,6 +45,7 @@ def _name_outside_quotes(name):
     standard_name = ' '.join([name[:open_quote_idx].strip(), name[close_quote_idx+2:].strip()])
     return standard_name
 
+
 def create_seasons_file():
     html_tables = utility.get_html_tables('https://en.wikipedia.org/wiki/Survivor_(American_TV_series)')
 
@@ -60,7 +59,7 @@ def create_seasons_file():
         file.write(json.dumps(season_map))
 
 
-def create_season_players_file():
+def extract_season_players_file():
     """Create CSV of all players for each season"""
     html_tables = utility.get_html_tables('https://en.wikipedia.org/wiki/List_of_Survivor_(American_TV_series)_contestants')
 
@@ -72,19 +71,23 @@ def create_season_players_file():
     player_table = player_table.rename(columns=column_trans)
 
     # Create fields 
-    player_table.insert(0, 'nick_name', player_table['name'].apply(_name_between_quotes), True)
-    player_table.insert(0, 'standard_name', player_table['name'].apply(_name_outside_quotes), True)
-    player_table.insert(0, 'player_hash', player_table['standard_name'].apply(utility._hash_player_name))
-    player_table.insert(0, 'season_number', player_table['season'].apply(_season_name_to_number), True)
+    player_table.insert(0, 'nick_name', player_table['name'].apply(_name_between_quotes), allow_duplicates=True)
+    player_table.insert(0, 'standard_name', player_table['name'].apply(_name_outside_quotes), allow_duplicates=True)
+    player_table.insert(0, 'season_number', player_table['season'].apply(_season_name_to_number), allow_duplicates=True)
     player_table.reset_index(drop=True, inplace=True)
 
     # Create file
     player_table.to_csv(SEASON_PLAYERS_FILE, sep='|', index=False)
 
+    # Load to lake
+    engine = get_db_engine()
+    player_table.to_sql('season_players_file', engine, schema='lake', if_exists='replace', index=False)
+
+
 
 def run():
     create_seasons_file()
-    create_season_players_file()
+    extract_season_players_file()
 
 if __name__ == '__main__':
     run()

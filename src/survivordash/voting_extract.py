@@ -1,17 +1,10 @@
-import sys
-import os
-import requests
-import csv
-import re
 
+import os, sys
+import re
 import numpy as np
 import pandas as pd
-from bs4 import BeautifulSoup
-import re
-
 from survivordash import utility
-from survivordash.wiki_etl import SEASON_PLAYERS_FILE
-import requests
+from db import get_db_engine
 
 
 """ Boxscore data pulled from https://www.truedorktimes.com/survivor/boxscores/data.htm"""
@@ -20,7 +13,7 @@ FILEPATH = os.path.dirname(os.path.abspath(__file__)) # directory of this file
 RESOURCE_PATH = FILEPATH + '/resources/'
 ALL_SEASONS_WIKI_URL = 'https://en.wikipedia.org/wiki/Survivor_(American_TV_series)'
 
-def get_season_wiki_url(season_number):
+def _get_season_wiki_url(season_number):
     tables = utility.get_html_tables(ALL_SEASONS_WIKI_URL)
     target_row = season_number-1
     season = tables[1].iloc[target_row]['Season title']
@@ -28,29 +21,33 @@ def get_season_wiki_url(season_number):
     return season_wiki_url
 
 
-def get_voting_table(season_number):
-    season_wiki_url = get_season_wiki_url(season_number)
+def _get_voting_table(season_number):
+    season_wiki_url = _get_season_wiki_url(season_number)
+    print(season_wiki_url)
     tables = utility.get_df_tables(season_wiki_url)
     voting_table = tables[4]
     voting_table = voting_table.reset_index(drop=True)
     return voting_table
 
+def _elimination_results(season_number):
+    df = _get_voting_table(season_number)
 
-def elimination_results(df, season_number):
     # set dimensions
     ROW_START, ROW_END = 2, 6
     df.set_index(df.columns[0], drop=True, inplace=True)
     df = df.iloc[ROW_START:ROW_END] # slice sub-table
+    df.columns = df.iloc[1] # Episode numbers
+    df = df.loc[:,~df.columns.duplicated(keep='last')] # remove duplicats cols
 
     # pivot
     pivot = df.T
+    pivot = pivot.iloc[1: , :] # drop first row, its a duplicated of our header
     pivot.columns = ['Episode', 'Day', 'Eliminated', 'Vote']
     pivot.reset_index(drop=True, inplace=True)
-    pivot.to_csv('test.csv', index=False)
     pattern = r"\[.+\]" # between brackets []
     endash = "\u2013"
-    pivot['Vote'] = pivot['Vote'].apply(lambda x: re.sub(pattern, '',  x).replace(endash, "-"))
-    pivot['VoteId'] = pivot.apply(lambda row: ('S' + str(season_number) + 'E' + row['Episode']), axis=1)
+    pivot['Vote'] = pivot['Vote'].apply(lambda x: '0' if pd.isnull(x) else re.sub(pattern, '',  x).replace(endash, "-"))
+    pivot['VoteId'] = pivot.apply(lambda row: ('S' + str(season_number) + 'E' + str(row['Episode'])), axis=1)
 
     def _extract_majority_votecount(vote_string):
         if '-' not in vote_string:
@@ -65,34 +62,11 @@ def elimination_results(df, season_number):
         return sum(int(votes) for votes in vote_string.split('-'))
 
     pivot['TotalVotesCast'] = pivot['Vote'].apply(lambda x: _extract_total_votes(x))
-    print(pivot)
+    pivot.insert(0, 'Season', season_number, allow_duplicates=True)
     return pivot
 
-def vote_history(df, season_number):
-    # structure: Voter, VoteID, VoteTarger
-    # set dimensions
-    ROW_START, ROW_END = 8, 24
-    df = df.iloc[ROW_START:ROW_END] # slice sub-table
 
-    df_dict = df.replace({np.nan:None}).to_dict()
-
-    data = []
-    for episode in df_dict:
-        for voter, target in df_dict[episode].items():
-            if not target:
-                continue
-
-            #print(f'In Episode {episode}, {voter} voted for {target}')
-            data.append((season_number, episode, voter, target))
-
-
-    votes_df = pd.DataFrame(data, columns=['Season', 'Episode', 'Voter', 'VotedFor'])
-    votes_df['VoteID'] = votes_df.apply(lambda row: ("S" + str(season_number) + 'E' + row['Episode']), axis=1)
-    print(votes_df)
-    return votes_df
-
-
-def final_vote(df, season_number):
+def _final_vote_dict(season_number):
     # we take from https://en.wikipedia.org/wiki/Survivor_(American_TV_series)
     table = utility.get_html_tables(ALL_SEASONS_WIKI_URL)[1]
     target_row = season_number-1
@@ -101,32 +75,50 @@ def final_vote(df, season_number):
     runners = " & ".join(set([df['Runner(s)-up'], df['Runner(s)-up.1']]))
 
     final_vote = {
+        "Season": season_number,
         "Winner": df['Winner'],
         "Runners": runners,
         "Vote": df['Final vote']
     }
-    print(final_vote)
-    return df
+    return final_vote
 
-
-def extract_all_vote_results(season_number):
-    vote_table = get_voting_table(season_number)
-    EPISODE_NUMBER_ROW = 2
-    vote_table.columns = vote_table.iloc[EPISODE_NUMBER_ROW] # Episode numbers as our header row
-    vote_table = vote_table.loc[:,~vote_table.columns.duplicated(keep='last')] # Condense special outcomes formatting
-
-    #elimination_df = elimination_results(vote_table, season_number)
-    #votes_df = vote_history(vote_table, season_number)
-    final_vote_df = final_vote(vote_table, season_number)
     
+def extract_final_vote_results(start, end):
+    print(f"fetching final votes for seasons {start} - {end-1}...")
+    header_row = ['Season', 'Winner', 'Runners', 'Vote']
+    rows = []
+    for season_num in range(start, end):
+        final_vote = _final_vote_dict(season_num)
+        row = [final_vote['Season'], final_vote['Winner'], final_vote['Runners'], final_vote['Vote']]
+        rows.append(row)
+
+    df = pd.DataFrame(data=rows, columns=header_row)
+    # Load to lake
+    engine = get_db_engine()
+    df.to_sql('final_votes', engine, schema='lake', if_exists='replace', index=False)
+
+
+def extract_elimination_stats(start, end):
+
+    final_df = None
+    for season_num in range(start, end):
+        df = _elimination_results(season_num)
+        if final_df is not None:
+            pd.concat([final_df, df])
+        else:
+            final_df=df
+
+    engine = get_db_engine()
+    final_df.to_sql('votes', engine, schema='lake', if_exists='replace', index=False)
+
 
 
 def run():
-    season_start = 11
-    season_cap = 15
-
-    for season in range(season_start, season_cap):
-        extract_all_vote_results(season)
+    season_start = 1
+    season_cap = 10
+    extract_final_vote_results(season_start, season_cap)
+    extract_elimination_stats(season_start, season_cap)
+    
 
 
 if __name__ == '__main__':
