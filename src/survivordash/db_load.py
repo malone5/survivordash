@@ -1,7 +1,7 @@
 import os, sys
 import psycopg2
-from boxscores_etl import CHALLENGE_STATS_FILE, GAME_STATS_FILE
-from wiki_etl import SEASON_PLAYERS_FILE
+from boxscore_extract import CHALLENGE_STATS_FILE, GAME_STATS_FILE
+from wiki_extract import SEASON_PLAYERS_FILE
 import csv
 
 

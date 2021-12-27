@@ -1,8 +1,8 @@
-from survivordash import wiki_etl, boxscores_etl, db_load
+from survivordash import wiki_extract, boxscore_extract, db_load
 
 def run():
-    wiki_etl.run()
-    boxscores_etl.run()
+    wiki_extract.run()
+    boxscore_extract.run()
     db_load.run()
 
 if __name__ == '__main__':
