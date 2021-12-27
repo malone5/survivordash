@@ -32,19 +32,19 @@ def _extract_player_names(elements):
         return player_names
 
 def _rename_complete_data_columns(df):
-    complete_field_map = {
+    complete_field_trans = {
         "Contestant": "name", #s33 doesnt have this mapping.
-        "SurvSc": "srv_score", # (Win% + Tribal Council Appear% + Jurty Vote%)  
-        "SurvAv": "srv_avg", 
-        "ChW": "ch_wins",
-        "ChA": "ch_appear",
-        "ChW%" : "ch_win_pct",
-        "SO": "ch_sat_out",
+        "SurvSc": "survivor_score", # (Win% + Tribal Council Appear% + Jurty Vote%)  
+        "SurvAv": "survivor_avg", 
+        "ChW": "challenge_wins",
+        "ChA": "challenge_appear",
+        "ChW%" : "challenge_win_pct",
+        "SO": "challenge_sat_out",
         "VFB": "votes_for_bootee",
         "VAP": "votes_against_self",
         "TotV": "total_votes_cast",
-        "TCA": "tc_appear",
-        "TC%": "tc_success_pct",
+        "TCA": "tribal_council_appear",
+        "TC%": "tribal_council_success_pct",
         "wTCR": "weighted_tc_ratio",
         "JVF": "jury_votes_for",
         "TotJ": "total_jurors",
@@ -52,7 +52,7 @@ def _rename_complete_data_columns(df):
     }
 
 
-    df.rename(columns=complete_field_map, inplace=True)
+    df.rename(columns=complete_field_trans, inplace=True)
 
     # mainly to fix issue with season33 missing the label
     if df.columns[1] != 'name':
@@ -64,14 +64,14 @@ def _rename_challenge_data_columns(df):
     df.columns = df.columns.str.replace("*", "")
     df.columns = df.columns.str.replace(".", "")
 
-    challenge_field_map = {
+    challenge_field_trans = {
         "Contestant": "name",
-        "MPF ChA": "ch_score", # ch_finish_avg * ch_appear
-        "MPF  ChA": "ch_score", # we have found anomolies with double spaces
-        "MPF": "ch_finish_avg", # Mean of all percent finishes
-        "ChA": "ch_appear",
+        "MPF ChA": "challenge_score", # challenge_finish_avg * challenge_appear
+        "MPF  ChA": "challenge_score", # we have found anomolies with double spaces
+        "MPF": "challenge_finish_avg", # Mean of all percent finishes
+        "ChA": "challenge_appear",
     }
-    df.rename(columns=challenge_field_map, inplace=True)
+    df.rename(columns=challenge_field_trans, inplace=True)
 
     for col in df.columns[4:]:
         new_col = col.replace(' ', '_')
@@ -102,12 +102,13 @@ def _extract_initials(input_name):
 
 def _match_player(input_name, season_number):
     df = pd.read_csv(SEASON_PLAYERS_FILE, sep='|')
-    df = df[['season_number', 'player_hash', 'nick_name', 'name','standard_name']]
+    df = df[['season_number', 'nick_name', 'name','standard_name']]
 
     # Clean
     input_name = input_name.replace('*', '')
 
-    # These are one-off names that we must manually adjust
+    # Our two sources (Wiki and truedorktimes do no "agree" on these nicknames)
+    # We make manual adjustments here so they agree
     input_name = input_name.replace('RC', 'R.C.')
     input_name = input_name.replace('Wardog', 'The Wardog')
     input_name = input_name.replace('Flica', 'Flicka')
@@ -116,31 +117,31 @@ def _match_player(input_name, season_number):
     initials = _extract_initials(input_name)
 
     # list of player hash matches returned
-    match = df.loc[(df['season_number'] == season_number) & (df['nick_name'].str.contains(input_name))]['standard_name'].values
-    if len(match) > 0:
-        return match[0]
+    matched_names = df.loc[(df['season_number'] == season_number) & (df['nick_name'].str.contains(input_name))]['standard_name'].values
+    if len(matched_names) > 0:
+        return matched_names[0]
 
-    # initals match (only if initals are more than 1)
+    # initals matched_names (only if initals are more than 1)
     if len(input_name.split()) > 1:
-        match = df[df['standard_name'].apply(_extract_initials).str.contains(initials)]['standard_name'].values
-        if len(match) > 0:
-            return match[0]
+        matched_names = df[df['standard_name'].apply(_extract_initials).str.contains(initials)]['standard_name'].values
+        if len(matched_names) > 0:
+            return matched_names[0]
 
     # Is the firstname in the nickname?
     for token in input_name.split():
-        match = df.loc[(df['standard_name'].str.contains(token, na=False))]['standard_name'].values
-        if len(match) > 0:
-            return match[0]
+        matched_names = df.loc[(df['standard_name'].str.contains(token, na=False))]['standard_name'].values
+        if len(matched_names) > 0:
+            return matched_names[0]
     
-    # list of player hash matches returned
-    match = df[df['standard_name'].str.contains(first_name_last_initial)]['standard_name'].values
-    if len(match) > 0:
-        return match[0]
+    # list of player hash matched_nameses returned
+    matched_names = df[df['standard_name'].str.contains(first_name_last_initial)]['standard_name'].values
+    if len(matched_names) > 0:
+        return matched_names[0]
 
     # desperation first 2 letter of name
-    match = df[df['standard_name'].str.contains(first_name_last_initial[:2])]['standard_name'].values
-    if len(match) > 0:
-        return match[0]
+    matched_names = df[df['standard_name'].str.contains(first_name_last_initial[:2])]['standard_name'].values
+    if len(matched_names) > 0:
+        return matched_names[0]
 
     return "NOMATCH"
 
@@ -229,12 +230,9 @@ def process_season_range(start=1, end=39):
     for season in range(start,end+1):
         process_season_data(season)
 
-def run():
-    season_cap = 39
+def run(season_cap=39):
     complete_boxscore_stats(end=season_cap)
     individual_boxscore_stats(end=season_cap)
-    #process_season_range(27,27)
-
 
 if __name__ == '__main__':
     run()

@@ -9,6 +9,6 @@ def get_db_engine():
     db = os.environ['WAREHOUSE_DB']
 
     sqluri = f'postgresql://{user}:{password}@{host}:{port}/{db}'
-    print(sqluri)
+    print("connected:", sqluri)
     engine = create_engine(sqluri)
     return engine

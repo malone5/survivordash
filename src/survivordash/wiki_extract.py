@@ -19,7 +19,7 @@ SEASON_PLAYERS_FILE = RESOURCE_PATH + 'wiki_season_players.csv'
 
 def _season_name_to_number(season_name):
     if not os.path.exists(os.path.join(SEASONS_FILE)):
-        create_seasons_file()
+        extract_seasons_file()
 
     with open(os.path.join(SEASONS_FILE)) as json_file:
         season_map = json.load(json_file)
@@ -41,12 +41,12 @@ def _name_outside_quotes(name):
     open_quote_idx = name.find('"')
     close_quote_idx = name.rfind('"')
 
-    # +2 to delete the quote-and-space that follows a nickname.
+    # close_quote_idx+2 to delete the quote-and-space that follows a nickname.
     standard_name = ' '.join([name[:open_quote_idx].strip(), name[close_quote_idx+2:].strip()])
     return standard_name
 
 
-def create_seasons_file():
+def extract_seasons_file():
     html_tables = utility.get_html_tables('https://en.wikipedia.org/wiki/Survivor_(American_TV_series)')
 
     # The second table on the wiki has the list of seasons
@@ -55,6 +55,7 @@ def create_seasons_file():
     
     season_map = dict(zip(seasons_table['season_title'], seasons_table['season_number']))
 
+    # write file
     with open(os.path.join(SEASONS_FILE), 'w') as file:
         file.write(json.dumps(season_map))
 
@@ -79,14 +80,14 @@ def extract_season_players_file():
     # Create file
     player_table.to_csv(SEASON_PLAYERS_FILE, sep='|', index=False)
 
-    # Load to lake
-    engine = get_db_engine()
-    player_table.to_sql('season_players_file', engine, schema='lake', if_exists='replace', index=False)
+    # Load to lake depricated here, moved to in db_load.py
+    # engine = get_db_engine()
+    # player_table.to_sql('season_players_file', engine, schema='lake', if_exists='replace', index=False)
 
 
 
 def run():
-    create_seasons_file()
+    extract_seasons_file()
     extract_season_players_file()
 
 if __name__ == '__main__':
