@@ -7,7 +7,7 @@ CREATE TABLE staging.challenge_stats(
     season smallint,
     mean_finish_pct numeric(5, 1), -- the average percent finished, 1 = won all cahllenges
     appearances smallint,
-    score numeric(5, 2)
+    score numeric(5, 2) -- mean_finish_pct * appearencessss
 );
 
 

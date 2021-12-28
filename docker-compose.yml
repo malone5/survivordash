@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+
   pipeline:
     image: pipeline
     container_name: pipeline
@@ -12,11 +13,14 @@ services:
     env_file:
       - env
     environment:
-        WAREHOUSE_USER: ${POSTGRES_USER}
-        WAREHOUSE_PASSWORD: ${POSTGRES_PASSWORD}
-        WAREHOUSE_DB: ${POSTGRES_DB}
-        WAREHOUSE_HOST: ${POSTGRES_HOST}
-        WAREHOUSE_PORT: ${POSTGRES_PORT}
+      WAREHOUSE_USER: ${POSTGRES_USER}
+      WAREHOUSE_PASSWORD: ${POSTGRES_PASSWORD}
+      WAREHOUSE_DB: ${POSTGRES_DB}
+      WAREHOUSE_HOST: ${POSTGRES_HOST}
+      WAREHOUSE_PORT: ${POSTGRES_PORT}
+    networks:
+      - postgres-network
+
   db:
     image: postgres
     restart: always
@@ -29,12 +33,39 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - postgres-network
       
   adminer:
     image: adminer
     restart: always
     ports:
-      - 3000:8080
+      - 4000:8080
+    networks:
+      - postgres-network
 
-      
-  
+  metabase:
+    image: metabase/metabase:latest
+    restart: always
+    ports:
+      - 3000:3000
+    env_file:
+      - env
+    environment: 
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${POSTGRES_DB}
+      MB_DB_PORT: ${POSTGRES_PORT}
+      MB_DB_USER: ${POSTGRES_USER}
+      MB_DB_PASS: ${POSTGRES_PASSWORD}
+      MB_DB_HOST: db
+    volumes:
+      - /home/seanzy/Projects/survivorDash/metabase-data:/metabase-data
+    depends_on: 
+      - db
+    networks:
+      - postgres-network
+
+networks:
+  postgres-network:
+    driver: bridge
+
