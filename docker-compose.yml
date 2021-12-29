@@ -1,6 +1,20 @@
 version: '3'
 
 services:
+  db:
+    image: postgres
+    restart: always
+    build:
+      context: ./containers/warehouse
+      dockerfile: db.Dockerfile
+    env_file:
+      - env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - postgres-network
 
   pipeline:
     image: pipeline
@@ -18,23 +32,12 @@ services:
       WAREHOUSE_DB: ${POSTGRES_DB}
       WAREHOUSE_HOST: ${POSTGRES_HOST}
       WAREHOUSE_PORT: ${POSTGRES_PORT}
+    depends_on: 
+      - db
     networks:
       - postgres-network
 
-  db:
-    image: postgres
-    restart: always
-    build:
-      context: ./containers/warehouse
-      dockerfile: db.Dockerfile
-    env_file:
-      - env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    networks:
-      - postgres-network
+
       
   adminer:
     image: adminer

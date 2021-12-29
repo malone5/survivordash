@@ -14,6 +14,9 @@ RUN pip install -r requirements.txt
 # COPY our whole repository into code dir
 COPY ./ /code/
 
-# keep continer from stopping
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+# run our etl
+CMD ["python", "/code/src/survivordash/run.py"]
+
+# DEBUG ONLY: keep continer alive for debugging from stopping
+#CMD ["tail", "-f", "/dev/null"]
 

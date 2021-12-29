@@ -61,8 +61,8 @@ def _rename_complete_data_columns(df):
     return df
 
 def _rename_challenge_data_columns(df):
-    df.columns = df.columns.str.replace("*", "")
-    df.columns = df.columns.str.replace(".", "")
+    df.columns = df.columns.str.replace("*", "", regex=False)
+    df.columns = df.columns.str.replace(".", "", regex=False)
 
     challenge_field_trans = {
         "Contestant": "name",

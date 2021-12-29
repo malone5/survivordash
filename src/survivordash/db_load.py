@@ -34,7 +34,7 @@ def run():
         cur = conn.cursor()
         cur.execute(f"CREATE SCHEMA IF NOT EXISTS lake")
     except:
-        print("I am unable to connet to the database")
+        raise Exception("I am unable to connet to the database")
 
     load_file(conn, CHALLENGE_STATS_FILE, 'challenge_game_stats')
     load_file(conn, GAME_STATS_FILE, 'game_stats')
