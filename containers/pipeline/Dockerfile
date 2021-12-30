@@ -5,10 +5,8 @@ WORKDIR /code
 # Where puyhon will look for additional modules/packages
 ENV PYTHONPATH=/code/src
 
-
 # Place requirements file in our container
 COPY ./containers/pipeline/requirements.txt requirements.txt
-# install python requirements
 RUN pip install -r requirements.txt
 
 # COPY our whole repository into code dir
@@ -18,5 +16,5 @@ COPY ./ /code/
 CMD ["python", "/code/src/survivordash/run.py"]
 
 # DEBUG ONLY: keep continer alive for debugging from stopping
-#CMD ["tail", "-f", "/dev/null"]
+# CMD ["tail", "-f", "/dev/null"]
 

@@ -13,6 +13,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
     networks:
       - postgres-network
 
@@ -54,19 +56,20 @@ services:
       - 3000:3000
     env_file:
       - env
-    environment: 
+    environment:
       MB_DB_TYPE: postgres
-      MB_DB_DBNAME: ${POSTGRES_DB}
+      MB_DB_DBNAME: ${MB_DB_DBNAME}
       MB_DB_PORT: ${POSTGRES_PORT}
       MB_DB_USER: ${POSTGRES_USER}
       MB_DB_PASS: ${POSTGRES_PASSWORD}
-      MB_DB_HOST: db
-    volumes:
-      - /home/seanzy/Projects/survivorDash/metabase-data:/metabase-data
+      MB_DB_HOST: ${POSTGRES_HOST}
     depends_on: 
       - db
     networks:
       - postgres-network
+
+volumes:
+  db-data:
 
 networks:
   postgres-network:

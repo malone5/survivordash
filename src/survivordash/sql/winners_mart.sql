@@ -9,7 +9,7 @@ SELECT winners.season, p.id as playerid, p.fullname, winners.jury_vote_pct
 FROM staging.players p
 JOIN (
     select distinct on (ps.season) ps.season, ps.playerid, ps.jury_vote_pct
-    FROM (select * from player_stats where jury_vote_pct is not null) ps
+    FROM (select * from staging.player_stats where jury_vote_pct is not null) ps
     order by ps.season, ps.jury_vote_pct desc
     ) winners
 on p.id=winners.playerid

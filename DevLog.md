@@ -83,3 +83,5 @@
 # Dev Notes: For challenge_game_stats we will ignore "individual_challenge_share" for simplicity since some
 # season have one-off immunity challenges and thus do not create a pattern we can learn from.
 # We will focus on challenges-particicpated-in and win percentage as our main metric. 
+
+# Big discovery using the metbase api to instantiate our datasources in our metabase instance! Lets gooo
