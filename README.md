@@ -96,7 +96,7 @@ _Below is an example of how you can instruct your audience on installing and set
 
 1. Clone the repo
    ```sh
-   git clone <GIT_REPO_URL> survivrodash
+   git clone https://github.com/malone5/survivordash.git
    cd survivordash
    ```
 2. Create an ```env``` file in the home directory
