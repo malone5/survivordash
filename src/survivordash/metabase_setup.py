@@ -1,8 +1,13 @@
 import requests
-import pandas as pd
-import json
-import os
-import sys
+import os, sys
+
+def terminate_if_metabase_unready():
+    res = requests.get('http://metabase:3000/api/health')
+    
+    if res.status_code != 200:
+        print("Metabase API failed health check. It is either not ready or initializeing.")
+        print("You can run", "docker exec -ti pipeline python /code/src/survivordash/metabase_setup.py", "later to populate metabase")
+        sys.exit()
 
 def get_setup_token():
     response = requests.get('http://metabase:3000/api/session/properties')
@@ -14,22 +19,22 @@ def setup_metabase_session(token):
     setup_params = {
         'token': token,
         'user':{
-            'email': 'test@local.host',
-            'first_name': 'Mister',
-            'last_name': 'Foo',
+            'email': 'dev@local.host',
             'password': 'fakepass1',
+            'first_name': 'Mr',
+            'last_name': 'Dev',
         },
         "database": {
-            'name': 'mydatabase',
+            'name': os.environ['POSTGRES_DB'],
         },
         "prefs": {
             'site_name': 'mysitename',
         }
     }
 
-    # TODO: on our initial setup. this request shoudl return our session_id
+    # TODO: on our initial setup. this request should return our session_id
     # So we should implment logic to use this sessionid and reduce redundancy
-    # For now we can just just get the session we created, this can make our function idempotent
+    # For now we can get the session we just created
     res = requests.post('http://metabase:3000/api/setup', json=setup_params)
 
     # get session
@@ -65,6 +70,7 @@ def add_data_to_metabase():
     
 
 def run():
+    terminate_if_metabase_unready()
     add_data_to_metabase()
     print("Metabase populated.")
 

@@ -85,3 +85,5 @@
 # We will focus on challenges-particicpated-in and win percentage as our main metric. 
 
 # Big discovery using the metbase api to instantiate our datasources in our metabase instance! Lets gooo
+
+# We have a race condition where our pipline finishes before Metabase is finmished initilizing

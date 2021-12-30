@@ -27,6 +27,7 @@ def tranform():
 
 
 def run():
+    print("running tranforms...")
     tranform()
 
 if __name__ == '__main__':
