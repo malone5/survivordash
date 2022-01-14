@@ -1,3 +1,5 @@
+### The following are notes/roadblocks/issues/milestones during development
+
 Suvivor Dash: a dashboad of survivor statistics
 
 **DevLog**: Tried reriretrieving data via google sheets but the sheets were not "published"
