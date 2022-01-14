@@ -5,7 +5,5 @@ env
 __pycache__*
 .pytest_cache
 src/survivordash/resources/*.csv
-src/survivordash/resources/*.json
 *.csv
-*.json
 metabase-data/
