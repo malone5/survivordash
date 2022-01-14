@@ -15,7 +15,7 @@ def get_db_engine():
     return engine
 
 
-def get_db_conn():
+def get_db_conn(options=""):
     user = os.environ['WAREHOUSE_USER']
     password = os.environ['WAREHOUSE_PASSWORD']
     host = os.environ['WAREHOUSE_HOST']
@@ -24,5 +24,5 @@ def get_db_conn():
 
     sqluri = f'postgresql://{user}:{password}@{host}:{port}/{db}'
     #cxnstr = "dbname='warehouse' user='devuser' host='db' password='welyketoparti'"
-    conn = psycopg2.connect(sqluri)
+    conn = psycopg2.connect(sqluri, options=options)
     return conn
