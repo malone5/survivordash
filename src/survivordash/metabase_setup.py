@@ -19,17 +19,10 @@ def setup_metabase_session(token):
     setup_params = {
         'token': token,
         'user':{
-<<<<<<< HEAD
             'email': 'dev@local.host',
-            'password': 'fakepass2',
-            'first_name': 'Mr',
-            'last_name': 'Dev',
-=======
-            'email': os.environ['MB_EMAIL'],
-            'password': os.environ['MB_PASS'],
+            'password': 'mypass1',
             'first_name': 'Dev',
             'last_name': 'User',
->>>>>>> 7b6ba3bf508f3eba3c7b9225641dec3c01554af6
         },
         "database": {
             'name': os.environ['POSTGRES_DB'],
