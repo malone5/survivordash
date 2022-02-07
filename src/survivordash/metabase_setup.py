@@ -20,7 +20,7 @@ def setup_metabase_session(token):
         'token': token,
         'user':{
             'email': 'dev@local.host',
-            'password': 'fakepass1',
+            'password': 'fakepass2',
             'first_name': 'Mr',
             'last_name': 'Dev',
         },
