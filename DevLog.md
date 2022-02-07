@@ -135,6 +135,17 @@ order by votes_against_self desc
 limit 5;
 
 
+-- bad challenges but made it to the end
+select s.season, p.fullname, s.* 
+from player_stats s
+join players p
+on s.playerid=p.id
+where challenge_appear > 10
+and jury_vote_pct is not null
+order by challenge_wins
+limit 5;
+
+
 
 **DevLog**: https://survivor.fandom.com/wiki/<survivro_name>
 is a great source for stats that might be better than true dork times. Somethign to look at
