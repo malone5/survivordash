@@ -103,6 +103,7 @@ def _extract_initials(input_name):
 def _match_player(input_name, season_number):
     df = pd.read_csv(SEASON_PLAYERS_FILE, sep='|')
     df = df[['season_number', 'nick_name', 'name','standard_name']]
+    df = df[df['season_number'] == season_number] 
 
     # Clean
     input_name = input_name.replace('*', '')
@@ -116,24 +117,24 @@ def _match_player(input_name, season_number):
     first_name_last_initial = _extract_first_name_last_initial(input_name)
     initials = _extract_initials(input_name)
 
-    # list of player hash matches returned
+    # Season number matches and name contained input
     matched_names = df.loc[(df['season_number'] == season_number) & (df['nick_name'].str.contains(input_name))]['standard_name'].values
     if len(matched_names) > 0:
         return matched_names[0]
 
-    # initals matched_names (only if initals are more than 1)
+    # initals (only if initals are more than 1)
     if len(input_name.split()) > 1:
         matched_names = df[df['standard_name'].apply(_extract_initials).str.contains(initials)]['standard_name'].values
         if len(matched_names) > 0:
             return matched_names[0]
 
-    # Is the firstname in the nickname?
+    # Is the first or last name in the nickname?
     for token in input_name.split():
         matched_names = df.loc[(df['standard_name'].str.contains(token, na=False))]['standard_name'].values
         if len(matched_names) > 0:
             return matched_names[0]
     
-    # list of player hash matched_nameses returned
+    # first_name_last_initial
     matched_names = df[df['standard_name'].str.contains(first_name_last_initial)]['standard_name'].values
     if len(matched_names) > 0:
         return matched_names[0]
