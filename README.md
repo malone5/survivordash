@@ -78,26 +78,25 @@ _Below is an example of how you can instruct your audience on installing and set
    POSTGRES_DB=warehouse
    POSTGRES_HOST=db
    POSTGRES_PORT=5432
-   MB_DB_DBNAME=metabase
-   MB_EMAIL=dev@local.host
-   MB_PASS=fakepass1
     ```
 3. Start the continers
    ```sh
    make up
    ```
 
-4. Run the pipeline (Make sure Metabase(localhost:4000) has completed installation)
+4. Run the pipeline when Metabase is installed (Make sure localhost:3000 has a log-in screen)
    ```sh
    docker exec -it pipeline python /code/src/survivordash/run.py
    ```
+   Once this process finished Metabase will now be populated.
 
 5. Visit
    ```sh
    http://localhost:3000  [Metabase BI Tool]
    http://localhost:4000  [Postgres Adminer]
    ```
-   MB_EMAIL and MB_PASS is what you will use to log into the metabase BI tool
+   Login to the Metabase dashboard with the credentials ```user=dev@local.host```   ```pass=mypass1```
+   
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
