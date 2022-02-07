@@ -1,6 +1,8 @@
 POSTGRES_USER=devuser
-POSTGRES_PASSWORD=welyketoparti
+POSTGRES_PASSWORD=dbpass
 POSTGRES_DB=warehouse
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
 MB_DB_DBNAME=metabase
+MB_EMAIL=dev@local.host
+MB_PASS=fakepass1

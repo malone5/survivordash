@@ -3,6 +3,7 @@ import psycopg2
 from boxscore_extract import CHALLENGE_STATS_FILE, GAME_STATS_FILE
 from wiki_extract import SEASON_PLAYERS_FILE
 import csv
+from db import get_db_conn
 
 
 def load_file(conn, file, tablename):
@@ -30,7 +31,8 @@ def load_file(conn, file, tablename):
 
 def run():
     try:
-        conn = psycopg2.connect("dbname='warehouse' user='devuser' host='db' password='welyketoparti'", options="-c search_path=lake")
+        options="-c search_path=lake"
+        conn = get_db_conn(options=options)
         cur = conn.cursor()
         cur.execute(f"CREATE SCHEMA IF NOT EXISTS lake")
     except:

@@ -55,7 +55,6 @@ This section should list any major frameworks/libraries used to bootstrap your p
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
 
 * Docker
 
@@ -69,17 +68,19 @@ _Below is an example of how you can instruct your audience on installing and set
    git clone https://github.com/malone5/survivordash.git
    cd survivordash
    ```
-2. Create an ```env``` file in the home directory
+2. Create an ```.env``` file in the home directory. 
     ```sh
-    touch env
+    touch .env
     ```
     ```sh
-        POSTGRES_USER=<user>
-        POSTGRES_PASSWORD=<pass>
-        POSTGRES_DB=warehouse
-        POSTGRES_HOST=db
-        POSTGRES_PORT=5432
-        MB_DB_DBNAME=metabase
+   POSTGRES_USER=<user>
+   POSTGRES_PASSWORD=<pass>
+   POSTGRES_DB=warehouse
+   POSTGRES_HOST=db
+   POSTGRES_PORT=5432
+   MB_DB_DBNAME=metabase
+   MB_EMAIL=dev@local.host
+   MB_PASS=fakepass1
     ```
 3. Start the continers
    ```sh
@@ -96,19 +97,9 @@ _Below is an example of how you can instruct your audience on installing and set
    http://localhost:3000  [Metabase BI Tool]
    http://localhost:4000  [Postgres Adminer]
    ```
-
+   MB_EMAIL and MB_PASS is what you will use to log into the metabase BI tool
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 <!-- ACKNOWLEDGMENTS -->
