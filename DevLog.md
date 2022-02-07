@@ -138,3 +138,11 @@ limit 5;
 
 **DevLog**: https://survivor.fandom.com/wiki/<survivro_name>
 is a great source for stats that might be better than true dork times. Somethign to look at
+
+
+**DevLog**: Insights
+
+Number of unanimous winners = 5 (James Thomas Jr., Adam Klien, Jeremy Collins, Earl Cole John Cochran)
+Most voted = (Laura Morett, Ozzy, Phillip, Baylor, Edna)
+Physical Liabilits/ Good Social = (Lydia Morales, Natalie White(Win), Rodger Bingham, Greg Smith, Sherri Biethman) - poor winning
+Beasts = (Colby Donaldson, Ozzy, Mike Holloway, Rob Cesternino, Tom Westman) - good at making it to final but losing
