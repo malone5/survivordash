@@ -55,7 +55,6 @@ This section should list any major frameworks/libraries used to bootstrap your p
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
 
 * Docker
 
@@ -71,7 +70,7 @@ _Below is an example of how you can instruct your audience on installing and set
    ```
 2. Create an ```.env``` file in the home directory. 
     ```sh
-    touch env
+    touch .env
     ```
     ```sh
    POSTGRES_USER=<user>
