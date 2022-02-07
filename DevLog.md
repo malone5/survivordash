@@ -136,3 +136,5 @@ limit 5;
 
 
 
+**DevLog**: https://survivor.fandom.com/wiki/<survivro_name>
+is a great source for stats that might be better than true dork times. Somethign to look at
