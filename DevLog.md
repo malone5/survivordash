@@ -90,3 +90,49 @@ We will focus on challenges-particicpated-in and win percentage as our main metr
 Big discovery using the metbase api to instantiate our datasources in our metabase instance! Lets gooo
 
 We have a race condition where our pipline finishes before Metabase is finmished initilizing
+
+**DevLog**: Cool Findings querying the data:
+
+-- winners vote percentage
+select s.season, p.fullname, s.jury_vote_pct
+from staging.player_stats s
+join staging.players p
+on s.playerid=p.id
+where jury_vote_pct>.5;
+
+-- winners
+select win.season, p.fullname
+from (
+select season, playerid from player_stats
+where jury_vote_pct>.5
+) win
+join players p
+on win.playerid=p.id
+order by win.season;
+
+
+-- group seasons contenstant won
+select string_agg(win.season::VARCHAR, ', '), p.fullname
+from (
+select season, playerid from player_stats
+where jury_vote_pct>.5
+) win
+join players p
+on win.playerid=p.id
+group by p.fullname;
+
+
+
+-- most voted for note : bad match on Lillian Morris (shoudl be Laura Moretz)
+-- Laura Moretz(threat), Phillip Sheppard(goat), Ozzy Lusth(challenge beast),  
+-- Baylor(strategic threat), Johnathan Penner(strategic)
+select s.season, p.fullname, s.* 
+from player_stats s
+join players p
+on s.playerid=p.id
+where votes_against_self is not null
+order by votes_against_self desc
+limit 5;
+
+
+
