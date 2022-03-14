@@ -77,16 +77,16 @@ This section should list any major frameworks/libraries used to bootstrap your p
    POSTGRES_HOST=db
    POSTGRES_PORT=5432
     ```
-3. Start the continers
+3. Start the containers
    ```sh
    make up
    ```
 
-4. Run the pipeline when Metabase is installed (Make sure localhost:3000 has a log-in screen)
+4. Run the pipeline when Metabase is installed. This take 1-3 minutes after running "make up". A good way to see if Metabase is ready is to check localhost:3000 for a log-in screen.
    ```sh
    docker exec -it pipeline python /code/src/survivordash/run.py
    ```
-   Once this process finished Metabase will now be populated.
+   Once this process finished Metabase will be configured and loaded with survivor data.
 
 5. Visit
    ```sh
