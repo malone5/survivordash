@@ -3,9 +3,6 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <!-- <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a> -->
 
   <h3 align="center">SurvivorDASH</h3>
 
@@ -95,7 +92,7 @@ _Below is an example of how you can instruct your audience on installing and set
    http://localhost:3000  [Metabase BI Tool]
    http://localhost:4000  [Postgres Adminer]
    ```
-   Login to the Metabase dashboard with the credentials ```user=dev@local.host```   ```pass=mypass1```
+   Login to the Metabase dashboard with the credentials ```user=dev@local.host```   ```pass=zcYsPtaCys6vTytxEAUyz9sYz```
    
 <p align="right">(<a href="#top">back to top</a>)</p>
 

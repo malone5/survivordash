@@ -20,7 +20,7 @@ def setup_metabase_session(token):
         'token': token,
         'user':{
             'email': 'dev@local.host',
-            'password': 'mypass1',
+            'password': 'zcYsPtaCys6vTytxEAUyz9sYz',
             'first_name': 'Dev',
             'last_name': 'User',
         },
@@ -36,12 +36,15 @@ def setup_metabase_session(token):
     # So we should implment logic to use this sessionid and reduce redundancy
     # For now we can get the session we just created
     res = requests.post('http://metabase:3000/api/setup', json=setup_params)
+    print("res=%s" % res.json())
 
     # get session
     response = requests.post('http://metabase:3000/api/session',
+            headers={"Content-Type": "application/json"},
                             json={'username': setup_params['user']['email'],
                                 'password': setup_params['user']['password']})
 
+    print("response=%s" % response.json())
     session_id = response.json()['id']
     return session_id
 
